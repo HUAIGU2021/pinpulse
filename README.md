@@ -19,7 +19,7 @@
 ## 快速开始 / Quick Start
 
 ```bash
-git clone https://github.com/huaigu/pinpulse.git
+git clone https://github.com/HUAIGU2021/pinpulse.git
 cd pinpulse
 npm install
 npm run tauri dev
