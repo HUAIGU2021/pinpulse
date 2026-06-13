@@ -34,6 +34,12 @@ npm run tauri dev
 
 *Download the latest installer from [GitHub Releases](https://github.com/HUAIGU2021/pinpulse/releases).*
 
+> **macOS 用户**: 安装后若提示「已损坏无法打开」，运行以下命令移除隔离标记：
+> ```bash
+> xattr -d com.apple.quarantine /Applications/pinpulse-desktop.app
+> ```
+> 这是因为安装包尚未进行 Apple 代码签名。
+
 ## 构建 / Build
 
 ```bash
