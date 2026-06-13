@@ -331,7 +331,7 @@ where
 // ---------------------------------------------------------------------------
 
 pub async fn run_sync_server(app: AppHandle, port: u16) -> Result<(), String> {
-    let addr = format!("127.0.0.1:{}", port);
+    let addr = format!("0.0.0.0:{}", port);
     let listener = tokio::net::TcpListener::bind(&addr)
         .await
         .map_err(|e| format!("bind {}: {}", addr, e))?;
