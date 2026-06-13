@@ -25,6 +25,15 @@ npm install
 npm run tauri dev
 ```
 
+## 下载 / Download
+
+从 [GitHub Releases](https://github.com/HUAIGU2021/pinpulse/releases) 下载最新安装包：
+
+- **macOS**: `pinpulse-desktop_*.dmg`
+- **Windows**: `pinpulse-desktop_*.msi`
+
+*Download the latest installer from [GitHub Releases](https://github.com/HUAIGU2021/pinpulse/releases).*
+
 ## 构建 / Build
 
 ```bash
