@@ -124,9 +124,46 @@ export default function App() {
       }
     };
 
+    const refreshSingleFolder = async (folder: string) => {
+      const boundTasks = tasksRef.current.filter((task) => task.boundFolder === folder && !task.archived);
+      if (boundTasks.length === 0) return;
+      const task = boundTasks[0];
+      try {
+        const refresh = await refreshBoundFolder(folder);
+        let updated = applyProgressEvents(task, refresh.events);
+        updated = applyMarkdownProgress(updated, refresh.markdownProgress);
+        const progressChanged = updated.automaticProgress !== task.automaticProgress
+          || JSON.stringify(updated.steps) !== JSON.stringify(task.steps);
+        const patch: Record<string, unknown> = {
+          automaticProgress: updated.automaticProgress,
+          steps: updated.steps,
+          agentStatusHistory: refresh.agentStatus?.history ?? [],
+          connection: "healthy" as const,
+          updatedAt: new Date().toISOString(),
+        };
+        if (refresh.agentStatus?.current) {
+          patch.agentStatus = applyAgentStatusTimeout(refresh.agentStatus.current);
+        }
+        setTasks((items) =>
+          items.map((item) => (item.id === task.id ? { ...item, ...patch } : item)),
+        );
+        if (progressChanged) {
+          updateTask(task.id, { automaticProgress: updated.automaticProgress, steps: updated.steps });
+        }
+      } catch {
+        setTasks((items) =>
+          items.map((item) =>
+            item.id === task.id
+              ? { ...item, connection: "warning" as const, updatedAt: new Date().toISOString() }
+              : item,
+          ),
+        );
+      }
+    };
+
     const setupEventListener = async () => {
       try {
-        const unlisten = await listen<{ folder: string; status: AgentStatusSnapshot }>(
+        const unlisten1 = await listen<{ folder: string; status: AgentStatusSnapshot }>(
           "agent-status-changed",
           (event) => {
             const { folder, status } = event.payload;
@@ -139,7 +176,15 @@ export default function App() {
             );
           },
         );
-        unlistenFns.push(unlisten);
+        unlistenFns.push(unlisten1);
+
+        const unlisten2 = await listen<{ folder: string }>(
+          "progress-file-changed",
+          (event) => {
+            refreshSingleFolder(event.payload.folder);
+          },
+        );
+        unlistenFns.push(unlisten2);
       } catch { /* event system unavailable */ }
     };
 
@@ -163,7 +208,9 @@ export default function App() {
             if (refresh.agentStatus?.current) {
               patch.agentStatus = applyAgentStatusTimeout(refresh.agentStatus.current);
             }
-            return { taskId: task.id, patch };
+            const progressChanged = updated.automaticProgress !== task.automaticProgress
+              || JSON.stringify(updated.steps) !== JSON.stringify(task.steps);
+            return { taskId: task.id, patch, progressChanged, updated };
           } catch {
             return {
               taskId: task.id,
@@ -182,6 +229,12 @@ export default function App() {
           return update ? { ...item, ...update.patch } : item;
         }),
       );
+
+      for (const u of updates) {
+        if ("progressChanged" in u && u.progressChanged && "updated" in u && u.updated) {
+          updateTask(u.taskId, { automaticProgress: u.updated.automaticProgress, steps: u.updated.steps }).catch(() => {});
+        }
+      }
     };
 
     const runFallbackLoop = async () => {

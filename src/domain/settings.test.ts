@@ -9,7 +9,7 @@ import {
 
 describe("DEFAULT_SETTINGS", () => {
   it("has all keys defined with values matching current hardcoded constants", () => {
-    expect(DEFAULT_SETTINGS.progressRefreshIntervalMs).toBe(30_000);
+    expect(DEFAULT_SETTINGS.progressRefreshIntervalMs).toBe(5_000);
     expect(DEFAULT_SETTINGS.autoCompleteDelayMs).toBe(1_000);
     expect(DEFAULT_SETTINGS.agentHeartbeatTimeoutMs).toBe(120_000);
     expect(DEFAULT_SETTINGS.agentStaleTimeoutMs).toBe(1_800_000);

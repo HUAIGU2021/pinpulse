@@ -132,7 +132,7 @@ describe("App", () => {
     expect(repositoryMocks.refreshBoundFolder).toHaveBeenCalledTimes(1);
 
     await act(async () => {
-      await vi.advanceTimersByTimeAsync(10_000);
+      await vi.advanceTimersByTimeAsync(3_000);
     });
 
     expect(repositoryMocks.refreshBoundFolder).toHaveBeenCalledTimes(1);
@@ -143,7 +143,7 @@ describe("App", () => {
     });
 
     await act(async () => {
-      await vi.advanceTimersByTimeAsync(30_000);
+      await vi.advanceTimersByTimeAsync(6_000);
     });
 
     expect(repositoryMocks.refreshBoundFolder).toHaveBeenCalledTimes(2);

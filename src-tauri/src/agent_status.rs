@@ -367,7 +367,20 @@ pub fn start_agent_status_watcher(
                     .map_or(false, |name| name == "agent-status.json")
             });
 
-            if !is_status_change {
+            let is_progress_change = event.paths.iter().any(|p| {
+                p.file_name().map_or(false, |name| {
+                    name == "progress.jsonl" || name == "PLAN.md"
+                })
+            });
+
+            if !is_status_change && !is_progress_change {
+                continue;
+            }
+
+            if is_progress_change {
+                let _ = app.emit("progress-file-changed", serde_json::json!({
+                    "folder": folder.to_string_lossy(),
+                }));
                 continue;
             }
 

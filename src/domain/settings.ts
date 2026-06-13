@@ -17,7 +17,7 @@ export type PinPulseSettings = {
 };
 
 export const DEFAULT_SETTINGS: PinPulseSettings = {
-  progressRefreshIntervalMs: 30_000,
+  progressRefreshIntervalMs: 5_000,
   autoCompleteDelayMs: 1_000,
   agentHeartbeatTimeoutMs: 120_000,
   agentStaleTimeoutMs: 1_800_000,
